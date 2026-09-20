@@ -8,7 +8,7 @@ const copy = {
   ar: {
     label: "البرامج",
     title: "اختر برنامجك",
-    body: "خمس برامج مستقلة تغطي رياضيات، إحصاء، ومحاسبة وإدارة أعمال — بالعربي، الإنجليزي، والألماني.",
+    body: "برامج مستقلة تغطي رياضيات، إحصاء، محاسبة وإدارة أعمال، وفيزياء — بالعربي، الإنجليزي، والألماني.",
     ctaTitle: "جاهز تبدأ؟",
     ctaBody: "اختر صفك الدراسي وابدأ التعلم اليوم.",
     ctaButton: "استكشف البرامج",
@@ -16,7 +16,7 @@ const copy = {
   en: {
     label: "Programs",
     title: "Choose your program",
-    body: "Independent programs covering Mathematics, Statistics, and Business & Accounting — in Arabic, English, and German.",
+    body: "Independent programs covering Mathematics, Statistics, Business & Accounting, and Physics — in Arabic, English, and German.",
     ctaTitle: "Ready to start?",
     ctaBody: "Pick your grade and begin learning today.",
     ctaButton: "Explore programs",
@@ -25,16 +25,16 @@ const copy = {
 
 const programs: Record<"ar" | "en", Program[]> = {
   ar: [
-    { slug: "math-ar-3", subject: "رياضيات", language: "عربي", grade: "٣ ث", description: "شرح كامل لمنهج الرياضيات، الجبر والتفاضل والتكامل." },
-    { slug: "statistics-ar", subject: "إحصاء", language: "عربي", grade: "٣ ث أدبي", description: "شرح منظم لمنهج الإحصاء لطلبة القسم الأدبي." },
-    { slug: "business-ar", subject: "محاسبة وإدارة أعمال", language: "عربي", grade: "٢ ث", description: "مسار الإدارة والمحاسبة، بإشراف مدرسي الرياضيات." },
-    { slug: "math-de", subject: "Mathematik", language: "ألماني", grade: "١-٣ ث", description: "شرح الرياضيات بالمنهج والمصطلحات الألمانية." },
+    { slug: "math-ar-3", subjectSlug: "math", subject: "رياضيات", language: "عربي", grade: "٣ ث", description: "شرح كامل لمنهج الرياضيات، الجبر والتفاضل والتكامل." },
+    { slug: "statistics-ar", subjectSlug: "math", subject: "إحصاء", language: "عربي", grade: "٣ ث أدبي", description: "شرح منظم لمنهج الإحصاء لطلبة القسم الأدبي." },
+    { slug: "business-ar", subjectSlug: "math", subject: "محاسبة وإدارة أعمال", language: "عربي", grade: "٢ ث", description: "مسار الإدارة والمحاسبة، بإشراف مدرسي الرياضيات." },
+    { slug: "physics-national", subjectSlug: "physics", subject: "Physics", curriculum: "National", language: "إنجليزي", grade: "١-٣ ث", description: "منهج National بالسكشن الإنجليزي." },
   ],
   en: [
-    { slug: "math-en-3", subject: "Mathematics", language: "English", grade: "3rd Sec", description: "Full coverage of algebra, differentiation, and integration." },
-    { slug: "statistics-en", subject: "Statistics", language: "English", grade: "3rd Sec · Literary", description: "Structured statistics content for literary-track students." },
-    { slug: "business-en", subject: "Business & Accounting", language: "English", grade: "2nd Sec", description: "Business & Accounting track, taught by math faculty." },
-    { slug: "math-de-en", subject: "Mathematik", language: "German", grade: "1-3 Sec", description: "Mathematics with German curriculum and terminology." },
+    { slug: "math-en-3", subjectSlug: "math", subject: "Mathematics", language: "English", grade: "3rd Sec", description: "Full coverage of algebra, differentiation, and integration." },
+    { slug: "statistics-en", subjectSlug: "math", subject: "Statistics", language: "English", grade: "3rd Sec · Literary", description: "Structured statistics content for literary-track students." },
+    { slug: "business-en", subjectSlug: "math", subject: "Business & Accounting", language: "English", grade: "2nd Sec", description: "Business & Accounting track, taught by math faculty." },
+    { slug: "physics-national", subjectSlug: "physics", subject: "Physics", curriculum: "National", language: "English", grade: "1-3 Sec", description: "Egyptian National system, English section." },
   ],
 };
 
