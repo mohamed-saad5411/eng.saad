@@ -19,10 +19,10 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // تحقق إن الـ locale صالح
-  if (!routing.locales.includes(locale as "ar" | "en")) {
-    notFound();
-  }
-
+  // if (!routing.locales.includes(locale as "ar" | "en")) {
+  //   notFound();
+  // }
+  if (locale !== "ar" && locale !== "en") notFound();
   setRequestLocale(locale);
 
   const messages = await getMessages();
