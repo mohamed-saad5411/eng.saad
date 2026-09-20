@@ -62,9 +62,10 @@ const lessonsData: Record<string, Record<string, Record<string, { unitTitle: str
 export default async function UnitLessonsPage({
   params,
 }: {
-  params: Promise<{ locale: "ar" | "en"; subject: string; programSlug: string; term: string; unit: string }>;
+  params:  Promise<{ locale: string; subject: string; programSlug: string; term: string; unit: string }>;
 }) {
-  const { locale, subject, programSlug, term, unit } = await params;
+  const { locale: rawLocale, subject, programSlug, term, unit } = await params;
+  const locale = (rawLocale === "en" ? "en" : "ar") as "ar" | "en";
   const unitData = lessonsData[programSlug]?.[term]?.[unit];
 
   if (!unitData) notFound();

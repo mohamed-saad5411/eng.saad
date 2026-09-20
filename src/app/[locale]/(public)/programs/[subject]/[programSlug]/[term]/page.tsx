@@ -51,9 +51,10 @@ const unitsData: Record<string, Record<string, { termName: string; units: UnitMe
 export default async function TermUnitsPage({
   params,
 }: {
-  params: Promise<{ locale: "ar" | "en"; subject: string; programSlug: string; term: string }>;
+  params:  Promise<{ locale: string; subject: string; programSlug: string; term: string }>;
 }) {
-  const { locale, subject, programSlug, term } = await params;
+  const { locale: rawLocale, subject, programSlug, term } = await params;
+  const locale = (rawLocale === "en" ? "en" : "ar") as "ar" | "en";
   const termData = unitsData[programSlug]?.[term];
 
   if (!termData) notFound();

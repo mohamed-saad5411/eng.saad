@@ -52,9 +52,10 @@ const programsData: Record<string, ProgramMeta> = {
 export default async function ProgramTermPickerPage({
   params,
 }: {
-  params: Promise<{ locale: "ar" | "en"; subject: string; programSlug: string }>;
+  params:  Promise<{ locale: string; subject: string; programSlug: string }>;
 }) {
-  const { locale, subject, programSlug } = await params;
+  const { locale: rawLocale, subject, programSlug } = await params;
+  const locale = (rawLocale === "en" ? "en" : "ar") as "ar" | "en";
   const program = programsData[programSlug];
 
   if (!program) notFound();

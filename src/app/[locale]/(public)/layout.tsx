@@ -50,9 +50,12 @@ export default async function PublicLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: "ar" | "en" }>;
+  // params: Promise<{ locale: "ar" | "en" }>;
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params;
+  // const { locale } = await params;
+  const { locale: rawLocale } = await params;
+  const locale = (rawLocale === "en" ? "en" : "ar") as "ar" | "en";
 
   return (
     <>

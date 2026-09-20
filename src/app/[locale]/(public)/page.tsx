@@ -38,8 +38,10 @@ const programs: Record<"ar" | "en", Program[]> = {
   ],
 };
 
-export default async function HomePage({ params }: { params: Promise<{ locale: "ar" | "en" }> }) {
-  const { locale } = await params;
+export default async function HomePage({ params }: { params:  Promise<{ locale: string }> }) {
+  // const { locale } = await params;
+  const { locale: rawLocale } = await params;
+  const locale = (rawLocale === "en" ? "en" : "ar") as "ar" | "en";
   const t = copy[locale];
 
   return (

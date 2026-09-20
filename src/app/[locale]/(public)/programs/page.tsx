@@ -103,8 +103,9 @@ const subjects = {
   ],
 };
 
-export default async function ProgramsPage({ params }: { params: Promise<{ locale: "ar" | "en" }> }) {
-  const { locale } = await params;
+export default async function ProgramsPage({ params }: { params:  Promise<{ locale: string }> }) {
+  const { locale: rawLocale } = await params;
+  const locale = (rawLocale === "en" ? "en" : "ar") as "ar" | "en";
   const t = copy[locale];
 
   return (

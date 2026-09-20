@@ -51,9 +51,10 @@ const dataBySubject: Record<SubjectSlug, Record<"ar" | "en", Program[]>> = {
 export default async function SubjectProgramsPage({
   params,
 }: {
-  params: Promise<{ locale: "ar" | "en"; subject: string }>;
+  params:  Promise<{ locale: string, subject: string }>;
 }) {
-  const { locale, subject } = await params;
+  const { locale: rawLocale, subject } = await params;
+  const locale = (rawLocale === "en" ? "en" : "ar") as "ar" | "en";
 
   if (subject !== "math" && subject !== "physics") {
     notFound();
