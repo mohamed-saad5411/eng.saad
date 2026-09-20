@@ -1,10 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap");
-@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --color-ink: #5972a9;
-  --color-brand: #2563eb;
-  --color-amber: #f59e0b;
+  --color-ink: #0f172a;      /* Deep Navy — headings, nav, primary buttons */
+  --color-brand: #2563eb;    /* Blue — links, CTAs, interactive accents */
+  --color-amber: #f59e0b;    /* Amber — sparse highlight: numbers, badges, math accents */
   --color-bg: #f8fafc;
   --color-card: #ffffff;
   --color-muted: #64748b;
@@ -27,6 +30,7 @@ body {
   color: var(--color-ink);
 }
 
+/* Use logical properties everywhere instead of left/right so ar/en mirror cleanly */
 .container-page {
   max-width: 80rem;
   margin-inline: auto;
@@ -38,6 +42,7 @@ body {
   font-variant-ligatures: none;
 }
 
+/* subtle graph-paper texture used once, behind the hero only */
 .grid-texture {
   background-image:
     linear-gradient(to right, var(--color-border) 1px, transparent 1px),

@@ -1,0 +1,10 @@
+{
+  "nav": {
+    "home": "Home",
+    "programs": "Programs",
+    "about": "About",
+    "contact": "Contact",
+    "login": "Log in",
+    "getStarted": "Get started"
+  }
+}
