@@ -35,9 +35,8 @@ purchases       (id, student_id, product_id, paid_at)
 profiles (id, role /* student|parent|admin */, ...)
 parent_student_links (parent_id, student_id)
 
-
-
-
+supabase password
+PhyMaths12345@
 
 
 

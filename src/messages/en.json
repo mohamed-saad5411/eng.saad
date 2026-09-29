@@ -6,5 +6,109 @@
     "contact": "Contact",
     "login": "Log in",
     "getStarted": "Get started"
+  },
+  "Auth": {
+    "brandName": "Eng. Saad",
+    "login": {
+      "heroTitle": "Every problem has a clear path to its solution.",
+      "heroSubtitle": "Sign in to keep up with lessons, exams, and your grades.",
+      "heroTag": "Math, Statistics & Accounting",
+      "title": "Sign in",
+      "subtitle": "Welcome back, enter your details to continue.",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "show": "Show",
+      "hide": "Hide",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create a new account",
+      "errorInvalid": "Incorrect email or password."
+    },
+    "register": {
+      "heroTitle": "Start your math journey here.",
+      "heroSubtitle": "Accurate details help us keep you and your parent updated.",
+      "heroTag": "Math · Statistics · Business & Accounting",
+      "title": "Create an account",
+      "subtitle": "Fill in the details below to register the student.",
+      "sectionAccount": "Account details",
+      "sectionAcademic": "Academic details",
+      "sectionContact": "Contact numbers",
+      "sectionExtra": "Additional details",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Full legal name",
+      "email": "Email",
+      "password": "Password",
+      "passwordHint": "At least 8 characters",
+      "grade": "Grade",
+      "gradeSelect": "Select grade",
+      "grade1": "1st Secondary",
+      "grade2": "2nd Secondary",
+      "grade3": "3rd Secondary",
+      "subject": "Subject",
+      "subjectSelect": "Select subject",
+      "subjectMath": "Mathematics",
+      "subjectStatistics": "Statistics",
+      "subjectBusiness": "Business & Accounting",
+      "subjectMathDe": "Mathematics (German curriculum)",
+      "studentPhone": "Student phone number",
+      "parentPhone": "Parent phone number",
+      "phonePlaceholder": "01xxxxxxxxx",
+      "idDocument": "Photo of birth certificate or national ID",
+      "uploadPrompt": "Click to upload a file",
+      "uploadChoose": "Choose file",
+      "fatherStatus": "Father's current occupation status",
+      "fatherStatusSelect": "Select status",
+      "fatherWorking": "Working",
+      "fatherRetired": "Retired",
+      "fatherDeceased": "Deceased",
+      "deathCertificate": "Photo of death certificate",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "errorIdRequired": "Please attach a photo of the birth certificate or national ID.",
+      "errorDeathCertRequired": "Please attach a photo of the death certificate.",
+      "errorGeneric": "Couldn't create the account, please try again.",
+      "errorProfileSave": "Account created, but saving your details failed. Please contact support."
+    }
+  },
+  "Status": {
+    "pending": {
+      "title": "Your account is under review",
+      "body": "We've received your details and documents, and our team is reviewing them. We'll let you know as soon as your account is activated.",
+      "checkBack": "This page checks automatically every so often.",
+      "signOut": "Sign out"
+    },
+    "rejected": {
+      "title": "Your account wasn't approved",
+      "body": "Unfortunately the documents you uploaded weren't approved.",
+      "reasonLabel": "Reason:",
+      "noReason": "No reason was specified.",
+      "contactSupport": "Contact support",
+      "signOut": "Sign out"
+    }
+  },
+  "Parent": {
+    "selectChild": {
+      "title": "Select a student",
+      "subtitle": "You're linked to more than one student — pick whose details you want to see.",
+      "gradeLabel": "Grade",
+      "continue": "Continue"
+    },
+    "linkChild": {
+      "title": "Link a student's account",
+      "subtitle": "Enter the student's registered phone number to link them to your account.",
+      "phoneLabel": "Student phone number",
+      "phonePlaceholder": "01xxxxxxxxx",
+      "submit": "Send link request",
+      "submitting": "Sending...",
+      "notFound": "No student found with this number.",
+      "genericError": "Something went wrong, please try again.",
+      "successTitle": "Request sent",
+      "successBody": "Your request is awaiting admin approval. We'll let you know once it's accepted.",
+      "linkAnother": "Link another student"
+    }
   }
 }
