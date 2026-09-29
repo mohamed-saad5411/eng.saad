@@ -37,10 +37,10 @@ export default function LoginPage() {
       return;
     }
 
-    const destination = await getPostLoginRedirect(supabase, signInData.user.id);
+    // const destination = await getPostLoginRedirect(supabase, signInData.user.id);
     setLoading(false);
 
-    router.push(destination);
+    // router.push(destination);
     router.refresh();
   }
 
