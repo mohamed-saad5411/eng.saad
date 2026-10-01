@@ -103,7 +103,7 @@ export function ProgramBrowser({ programs, locale }: { programs: ProgramCardData
                         ← {t.grades[grade]}
                     </button>
                     <h2 className="text-lg font-bold">{t.chooseTrack}</h2>
-                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <div className="mt-4 grid gap-3 sm:grid-cols-3">
                         {tracksForGrade.map(([code, name]) => (
                             <button
                                 key={code}
@@ -125,7 +125,7 @@ export function ProgramBrowser({ programs, locale }: { programs: ProgramCardData
                             ← {t.chooseTrack}
                         </button>
                     )}
-                    <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="grid gap-6 sm:grid-cols-3">
                         {visiblePrograms.map((p) => (
                             <ProgramCard key={p.slug} program={p as Program} locale={locale} />
                         ))}
