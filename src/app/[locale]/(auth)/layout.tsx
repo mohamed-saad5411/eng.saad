@@ -1,15 +1,27 @@
 import { Navbar } from "@/components/landing/navbar";
 import { Footer } from "@/components/landing/footer";
+import { notFound } from "next/navigation";
+
+
+
+type AuthLayoutProps = {
+  children: React.ReactNode;
+  params: Promise<{
+    locale: string;
+  }>;
+};
+
 
 export default async function AuthLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ locale: "ar" | "en" }>;
-}) {
+}: AuthLayoutProps) {
   const { locale } = await params;
 
+  if (locale !== "ar" && locale !== "en") {
+    notFound();
+  }
+  
   return (
     <>
       <Navbar locale={locale} />
@@ -18,3 +30,4 @@ export default async function AuthLayout({
     </>
   );
 }
+
