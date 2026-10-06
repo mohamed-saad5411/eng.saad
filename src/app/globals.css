@@ -55,8 +55,9 @@ body {
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap");
 @import "tailwindcss";
 
+
 :root {
-  --color-ink: #0f172a;
+  --color-ink: #5972a9;
   --color-brand: #2563eb;
   --color-amber: #f59e0b;
   --color-bg: #f8fafc;
@@ -73,13 +74,13 @@ body {
    (see components/shared/theme-toggle.tsx) and persisted to localStorage.
    Every page already reads these as var(--color-x), so nothing else changes. */
 :root[data-theme="dark"] {
-  --color-ink: #f1f5f9;      /* headings/text — was near-black, now near-white */
-  --color-brand: #3b82f6;     /* slightly brighter blue for contrast on dark bg */
+  --color-ink: #4e7091;      /* headings/text — was near-black, now near-white */
+  --color-brand: #4a87e9;     /* slightly brighter blue for contrast on dark bg */
   --color-amber: #fbbf24;
-  --color-bg: #0b1220;
-  --color-card: #131c2e;
-  --color-muted: #94a3b8;
-  --color-border: #263449;
+  --color-bg: #080f1c;
+  --color-card: #1d2942;
+  --color-muted: #5a7395;
+  --color-border: #223044;
 }
 
 html[lang="ar"] body {
