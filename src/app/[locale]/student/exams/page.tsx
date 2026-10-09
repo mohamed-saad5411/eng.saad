@@ -28,6 +28,27 @@ const copy = {
     },
 };
 
+type Relation<T> = T | T[] | null;
+type StudentProgram = { id: string; title: string };
+type ExamRow = {
+    id: string;
+    scope: string;
+    lessons?: Relation<{ title: string }>;
+    units?: Relation<{ title: string }>;
+};
+type ExamAttempt = {
+    exam_id: string;
+    status: string;
+    mcq_score: number | null;
+    essay_status: string | null;
+    essay_score: number | null;
+};
+
+function firstRelation<T>(relation: Relation<T> | undefined): T | null {
+    if (relation == null) return null;
+    return Array.isArray(relation) ? relation[0] ?? null : relation;
+}
+
 export default async function StudentExamsPage({
     params,
 }: {
@@ -48,33 +69,53 @@ export default async function StudentExamsPage({
         .single();
 
     if (!student) redirect("/register");
-    const program = (student as any).programs;
+    const program = firstRelation(
+        (student as { programs: Relation<StudentProgram> }).programs
+    );
+    if (!program) redirect("/register");
 
     // every lesson-exam + unit-exam that belongs to this program
-    const { data: exams } = await supabase
-        .from("exams")
-        .select(
-            `
-      id, scope, passing_score,
-      lessons ( title, units ( terms ( program_id ) ) ),
-      units ( title, terms ( program_id ) )
-    `
-        )
-        .eq("is_published", true);
+    const [lessonExamResult, unitExamResult] = await Promise.all([
+        supabase
+            .from("exams")
+            .select("id, scope, lessons!inner(title, units!inner(terms!inner(program_id)))")
+            .eq("is_published", true)
+            .eq("scope", "lesson")
+            .eq("lessons.units.terms.program_id", program.id),
+        supabase
+            .from("exams")
+            .select("id, scope, units!inner(title, terms!inner(program_id))")
+            .eq("is_published", true)
+            .eq("scope", "unit")
+            .eq("units.terms.program_id", program.id),
+    ]);
 
-    const programExams = (exams ?? []).filter((ex: any) => {
-        const pid = ex.lessons?.units?.terms?.program_id ?? ex.units?.terms?.program_id;
-        return pid === program.id;
-    });
+    if (lessonExamResult.error || unitExamResult.error) {
+        const error = lessonExamResult.error ?? unitExamResult.error;
+        console.error("Student exams query failed:", error);
+        throw new Error("Failed to load student exams", { cause: error });
+    }
 
-    const examIds = programExams.map((e: any) => e.id);
-    const { data: attempts } = await supabase
-        .from("exam_attempts")
-        .select("exam_id, status, mcq_score, essay_status, essay_score")
-        .eq("student_id", userId)
-        .in("exam_id", examIds.length ? examIds : ["00000000-0000-0000-0000-000000000000"]);
+    const programExams = [
+        ...(lessonExamResult.data ?? []),
+        ...(unitExamResult.data ?? []),
+    ] as ExamRow[];
+    const examIds = programExams.map((exam) => exam.id);
+    const { data: attemptRows, error: attemptsError } = examIds.length
+        ? await supabase
+            .from("exam_attempts")
+            .select("exam_id, status, mcq_score, essay_status, essay_score")
+            .eq("student_id", userId)
+            .in("exam_id", examIds)
+        : { data: [], error: null };
 
-    const attemptByExam = new Map((attempts ?? []).map((a: any) => [a.exam_id, a]));
+    if (attemptsError) {
+        console.error("Student exam attempts query failed:", attemptsError);
+        throw new Error("Failed to load student exam attempts", { cause: attemptsError });
+    }
+    const attempts = (attemptRows ?? []) as ExamAttempt[];
+
+    const attemptByExam = new Map(attempts.map((attempt) => [attempt.exam_id, attempt]));
 
     const navItems: NavItem[] = [
         { href: "/student/dashboard", label: t.nav.home, icon: Home },
@@ -84,7 +125,7 @@ export default async function StudentExamsPage({
         { href: "/student/account", label: t.nav.account, icon: User },
     ];
 
-    function statusLabel(attempt: any) {
+    function statusLabel(attempt: ExamAttempt | undefined) {
         if (!attempt) return t.notStarted;
         if (attempt.status === "in_progress") return t.inProgress;
         if (attempt.status === "submitted") return t.submitted;
@@ -101,9 +142,9 @@ export default async function StudentExamsPage({
                 <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-white">
                     <table className="w-full text-sm">
                         <tbody>
-                            {programExams.map((ex: any) => {
+                            {programExams.map((ex) => {
                                 const attempt = attemptByExam.get(ex.id);
-                                const title = ex.scope === "lesson" ? ex.lessons?.title : ex.units?.title;
+                                const title = firstRelation(ex.lessons)?.title ?? firstRelation(ex.units)?.title;
                                 const totalScore =
                                     (attempt?.mcq_score ?? 0) + (attempt?.essay_score ?? 0);
                                 return (

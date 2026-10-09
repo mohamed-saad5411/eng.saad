@@ -16,6 +16,16 @@ const copy = {
   },
 };
 
+type Relation<T> = T | T[] | null;
+type StudentProgram = { id: string; title: string };
+type ProgramLesson = { id: string; title: string; slug: string; unit_id: string };
+type ProgramUnit = { id: string; title: string; slug: string; lessons: ProgramLesson[] };
+type ProgramTerm = { id: string; name: string; slug: string; units: ProgramUnit[] };
+
+function firstRelation<T>(relation: Relation<T>): T | null {
+  return Array.isArray(relation) ? relation[0] ?? null : relation;
+}
+
 export default async function StudentProgramPage({
   params,
 }: {
@@ -36,22 +46,49 @@ export default async function StudentProgramPage({
     .single();
 
   if (!student) redirect("/register");
-  const program = (student as any).programs;
+  const program = firstRelation(
+    (student as { programs: Relation<StudentProgram> }).programs
+  );
+  if (!program) redirect("/register");
 
-  const { data: terms } = await supabase
+  const { data: terms, error: termsError } = await supabase
     .from("terms")
     .select("id, name, slug, units ( id, title, slug, lessons ( id, title, slug, unit_id ) )")
     .eq("program_id", program.id)
     .order("sort_order");
 
-  const { data: views } = await supabase
-    .from("video_views")
-    .select("completed_at, videos ( lesson_id )")
-    .eq("student_id", userId);
+  if (termsError) {
+    console.error("Student program terms query failed:", termsError);
+    throw new Error("Failed to load student program content", { cause: termsError });
+  }
+  const programTerms = (terms ?? []) as ProgramTerm[];
 
-  const completedLessonIds = new Set(
-    (views ?? []).filter((v: any) => v.completed_at).map((v: any) => v.videos?.lesson_id)
+  const lessonIds = programTerms.flatMap((term) =>
+    term.units.flatMap((unit) => unit.lessons.map((lesson) => lesson.id))
   );
+  const completedLessonIds = new Set<string>();
+
+  if (lessonIds.length > 0) {
+    const { data: views, error: viewsError } = await supabase
+      .from("video_views")
+      .select("videos!inner(lesson_id)")
+      .eq("student_id", userId)
+      .not("completed_at", "is", null)
+      .in("videos.lesson_id", lessonIds);
+
+    if (viewsError) {
+      console.error("Student program progress query failed:", viewsError);
+      throw new Error("Failed to load student lesson progress", { cause: viewsError });
+    }
+
+    for (const view of views ?? []) {
+      for (const video of view.videos ?? []) {
+        if (typeof video.lesson_id === "string") {
+          completedLessonIds.add(video.lesson_id);
+        }
+      }
+    }
+  }
 
   const navItems: NavItem[] = [
     { href: "/student/dashboard", label: t.nav.home, icon: Home },
@@ -66,15 +103,15 @@ export default async function StudentProgramPage({
       <h1 className="text-xl font-bold">{t.title}</h1>
 
       <div className="mt-6 flex flex-col gap-8">
-        {(terms ?? []).map((term: any) => (
+        {programTerms.map((term) => (
           <div key={term.id}>
             <h2 className="text-sm font-semibold text-[var(--color-brand)]">{term.name}</h2>
             <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {(term.units ?? []).map((unit: any) => (
+              {term.units.map((unit) => (
                 <div key={unit.id} className="rounded-2xl border border-[var(--color-border)] bg-white p-5">
                   <h3 className="font-bold">{unit.title}</h3>
                   <ul className="mt-3 flex flex-col gap-2">
-                    {(unit.lessons ?? []).map((lesson: any) => {
+                    {unit.lessons.map((lesson) => {
                       const done = completedLessonIds.has(lesson.id);
                       return (
                         <li key={lesson.id}>

@@ -37,6 +37,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { routing } from "@/lib/i18n/routing";
 import "../globals.css";
 
@@ -61,16 +62,16 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
       <head>
-        {/* Runs before paint — sets the saved/system theme immediately so
-            there's no flash of the wrong theme on load. */}
-        <script
+        <Script
+          id="initialize-theme"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               try {
                 const saved = localStorage.getItem('theme');
                 const theme = saved ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
                 document.documentElement.setAttribute('data-theme', theme);
-              } catch (e) {}
+              } catch {}
             `,
           }}
         />

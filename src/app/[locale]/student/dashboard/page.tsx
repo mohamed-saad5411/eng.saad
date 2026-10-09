@@ -173,6 +173,17 @@ const copy = {
   },
 };
 
+type DashboardLesson = { id: string; title: string; slug: string };
+type DashboardUnit = {
+  id: string;
+  title: string;
+  slug: string;
+  lessons: DashboardLesson[];
+};
+type DashboardTerm = { id: string; name: string; units: DashboardUnit[] };
+type LessonInProgram = DashboardLesson & { termId: string; unitId: string };
+type StudentProgram = { id: string; title: string; slug: string };
+
 export default async function StudentDashboardPage({
   params,
 }: {
@@ -196,38 +207,62 @@ export default async function StudentDashboardPage({
   // registration requires picking a program, but guard anyway.
   if (!student) redirect("/register");
 
-  const program = (student as any).programs;
+  const programRelation = (
+    student as { programs: StudentProgram | StudentProgram[] | null }
+  ).programs;
+  const program = Array.isArray(programRelation) ? programRelation[0] : programRelation;
+  if (!program) redirect("/register");
 
-  const { data: terms } = await supabase
+  const { data: termsData } = await supabase
     .from("terms")
     .select("id, name, units ( id, title, slug, lessons ( id, title, slug ) )")
     .eq("program_id", program.id)
     .order("sort_order");
+  const terms: DashboardTerm[] = termsData ?? [];
+
+  const lessonIds = terms.flatMap((term) =>
+    term.units.flatMap((unit) => unit.lessons.map((lesson) => lesson.id))
+  );
 
   // flatten every lesson for progress calculation, keeping parent ids so we
   // can link straight into /student/programs/.../lessons/[lessonId]
-  const allLessons = (terms ?? []).flatMap((term: any) =>
-    (term.units ?? []).flatMap((u: any) =>
-      (u.lessons ?? []).map((l: any) => ({ ...l, termId: term.id, unitId: u.id }))
+  const allLessons: LessonInProgram[] = terms.flatMap((term) =>
+    term.units.flatMap((unit) =>
+      unit.lessons.map((lesson) => ({
+        ...lesson,
+        termId: term.id,
+        unitId: unit.id,
+      }))
     )
   );
 
-  const { data: views } = await supabase
-    .from("video_views")
-    .select("video_id, completed_at, videos ( lesson_id )")
-    .eq("student_id", userId);
+  const completedLessonIds = new Set<string>();
+  if (lessonIds.length > 0) {
+    const { data: views, error: viewsError } = await supabase
+      .from("video_views")
+      .select("videos!inner(lesson_id)")
+      .eq("student_id", userId)
+      .not("completed_at", "is", null)
+      .in("videos.lesson_id", lessonIds);
 
-  const completedLessonIds = new Set(
-    (views ?? [])
-      .filter((v: any) => v.completed_at)
-      .map((v: any) => v.videos?.lesson_id)
-  );
+    if (viewsError) {
+      console.error("Student dashboard progress query failed:", viewsError);
+      throw new Error("Failed to load student lesson progress", { cause: viewsError });
+    }
+
+    for (const view of views ?? []) {
+      for (const video of view.videos ?? []) {
+        const lessonId = video.lesson_id;
+        if (typeof lessonId === "string") completedLessonIds.add(lessonId);
+      }
+    }
+  }
 
   const progressPct = allLessons.length
     ? Math.round((completedLessonIds.size / allLessons.length) * 100)
     : 0;
 
-  const nextLesson = allLessons.find((l: any) => !completedLessonIds.has(l.id));
+  const nextLesson = allLessons.find((lesson) => !completedLessonIds.has(lesson.id));
 
   const navItems: NavItem[] = [
     { href: "/student/dashboard", label: t.nav.home, icon: Home },
@@ -272,10 +307,10 @@ export default async function StudentDashboardPage({
       {/* units list */}
       <h2 className="mt-10 text-lg font-bold">{t.unitsTitle}</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {(terms ?? []).flatMap((term: any) =>
-          (term.units ?? []).map((unit: any) => {
-            const total = unit.lessons?.length ?? 0;
-            const done = (unit.lessons ?? []).filter((l: any) => completedLessonIds.has(l.id)).length;
+        {terms.flatMap((term) =>
+          term.units.map((unit) => {
+            const total = unit.lessons.length;
+            const done = unit.lessons.filter((lesson) => completedLessonIds.has(lesson.id)).length;
             return (
               <div key={unit.id} className="rounded-2xl border border-[var(--color-border)] bg-white p-5">
                 <h3 className="font-bold">{unit.title}</h3>
