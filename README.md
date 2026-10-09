@@ -124,3 +124,11 @@ src/
 │   └── exam.ts
 │
 └── middleware.ts                     # intl middleware -> auth check, in that order
+
+
+
+
+
+git add .
+git commit -m "sec commit"
+git push origin main
